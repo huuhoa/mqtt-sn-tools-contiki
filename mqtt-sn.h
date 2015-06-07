@@ -150,7 +150,7 @@ typedef struct {
   uint8_t return_code;
 } puback_packet_t;
 
-typedef struct __attribute__((packed)) {
+typedef struct {
   uint8_t length;
   uint8_t type;
   uint8_t flags;
@@ -161,7 +161,7 @@ typedef struct __attribute__((packed)) {
   };
 } subscribe_packet_t;
 
-typedef struct __attribute__((packed)) {
+typedef struct {
   uint8_t length;
   uint8_t type;
   uint8_t flags;

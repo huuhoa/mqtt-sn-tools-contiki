@@ -260,6 +260,7 @@ PROCESS_THREAD(mqtt_sn_process, ev, data)
 #if 1
 static void send_packet(struct mqtt_sn_connection *mqc, char* data, size_t len)
 {
+  printf("MQTT send_packet with data length: %d\n", len);
   simple_udp_send(&(mqc->sock), data, len);//these datatypes should all cast fine
   if (mqc->keep_alive>0 && mqc->stat == MQTTSN_CONNECTED)
   {
@@ -268,13 +269,14 @@ static void send_packet(struct mqtt_sn_connection *mqc, char* data, size_t len)
     //steady stream of pings to ensure that the connection stays alive.
     ctimer_restart(&(mqc->send_timer));
   }
+  printf("Send DONE!\n");
 }
 #endif
 
 #if 1
 void mqtt_sn_send_connect(struct mqtt_sn_connection *mqc, const char* client_id, uint16_t keepalive)
 {
-    connect_packet_t packet;
+    static connect_packet_t packet;
 
     // Check that it isn't too long
     if (client_id && strlen(client_id) > 23) {
@@ -303,7 +305,7 @@ void mqtt_sn_send_connect(struct mqtt_sn_connection *mqc, const char* client_id,
     mqc->stat = MQTTSN_WAITING_CONNACK;
     mqc->connection_retries++;
 
-    return send_packet(mqc, (char*)&packet, packet.length);
+    send_packet(mqc, (char*)&packet, packet.length);
 }
 #endif
 #if 1
@@ -456,7 +458,7 @@ void mqtt_sn_send_pingreq(struct mqtt_sn_connection *mqc)
     ctimer_restart(&(mqc->send_timer));
 
 
-    return send_packet(mqc, (char*)&packet, 2);
+    send_packet(mqc, (char*)&packet, 2);
 }
 #endif
 #if 1
@@ -471,7 +473,7 @@ void mqtt_sn_send_pingresp(struct mqtt_sn_connection *mqc)
         printf("Sending ping response...\n");
     }
 
-    return send_packet(mqc, (char*)&packet, 2);
+    send_packet(mqc, (char*)&packet, 2);
 }
 #endif
 #if 1
